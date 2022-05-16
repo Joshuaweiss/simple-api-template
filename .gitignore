@@ -1,0 +1,5 @@
+node_modules
+public_key
+terraform.tfstate
+terraform.tfstate.backup
+.terraform
