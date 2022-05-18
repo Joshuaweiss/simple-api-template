@@ -17,3 +17,11 @@ output "bastion_endpoint" {
 output "rds_password_secret_id" {
   value = module.rds.password_secret_id
 }
+
+# output "lambda_sg" {
+#   value = module.networking.lambda_security_group
+# }
+
+output "private_subnet_ids" {
+  value = module.networking.private_subnet_ids
+}

@@ -11,7 +11,7 @@ terraform {
 
 provider "aws" {
   profile = "default"
-  region  = "us-east-1"
+  region  = var.aws_region
 }
 
 module "networking" {
@@ -20,7 +20,9 @@ module "networking" {
   tags = var.tags
   up = var.up
 
-  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1e"]
+  cidr = var.cidr
+
+  availability_zones = var.aws_azs
 }
 
 module "bastion" {
@@ -30,7 +32,7 @@ module "bastion" {
   up = var.up
   ingress_cidrs = var.home_ips
   vpc_id = module.networking.vpc_id
-  subnet_id = module.networking.public_subnet_1_id
+  subnet_id = module.networking.public_subnet_ids[0]
   public_key = file("${path.module}/public_key")
 }
 
@@ -41,11 +43,7 @@ module "rds" {
   name = "${var.name}_db"
   up = var.up
   vpc_id = module.networking.vpc_id
-  subnet_ids = [
-    module.networking.private_subnet_1_id,
-    module.networking.private_subnet_2_id,
-    module.networking.private_subnet_3_id
-  ]
+  subnet_ids = module.networking.private_subnet_ids
 
   egress_sgs = [module.bastion.sg_id]
   ingress_sgs = [module.bastion.sg_id]
