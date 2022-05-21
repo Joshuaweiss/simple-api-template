@@ -1,0 +1,36 @@
+{
+    "name": "api",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "UNLICENSED",
+    "scripts": {
+        "type": "tsc --noEmit",
+        "knex": "NODE_OPTIONS=\"--loader ts-node/esm\" knex",
+        "migrate:make": "yarn knex migrate:make",
+        "migrate:latest": "yarn knex migrate:latest",
+        "migrate:rollback": "yarn knex migrate:rollback",
+        "start": "sls offline start"
+    },
+    "dependencies": {
+        "@aws-sdk/client-ssm": "^3.95.0",
+        "knex": "^1.0.7",
+        "objection": "^3.0.1",
+        "pg": "^8.7.3",
+        "pgpass": "^1.0.5",
+        "yup": "^v1.0.0-beta.4 "
+    },
+    "devDependencies": {
+        "@babel/core": "^7.17.9",
+        "@babel/preset-env": "^7.16.11",
+        "@babel/preset-typescript": "^7.16.7",
+        "@types/aws-lambda": "^8.10.93",
+        "@types/node": "^17.0.25",
+        "babel-loader": "^8.2.4",
+        "serverless": "^3.17.0",
+        "serverless-offline": "^8.8.0",
+        "serverless-webpack": "^5.7.0",
+        "ts-node": "^10.7.0",
+        "typescript": "^4.6.3",
+        "webpack": "^5.72.0"
+    }
+}

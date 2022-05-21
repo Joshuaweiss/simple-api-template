@@ -1,0 +1,28 @@
+service: api
+frameworkVersion: '3'
+
+custom:
+  terraform: ${file(./terraform.cjs)}
+  webpack:
+    webpackConfig: 'webpack.config.cjs'
+    packager: yarn
+    package:
+      individually: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  environment:
+    STAGE: ${opt:stage, "local"}
+    MASTER_USERNAME: ${self:custom.terraform.master_username.value}
+    DATABASE_NAME: ${self:custom.terraform.database_name.value}
+    RDS_ENDPOINT: ${self:custom.terraform.rds_endpoint.value}
+    RDS_PASSWORD_SECRET_ID: ${self:custom.terraform.rds_password_secret_id.value}
+
+functions:
+  migrations:
+    handler: src/handlers/migrations.handler
+
+plugins:
+  - serverless-webpack
+  - serverless-offline

@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "lib": ["es6", "DOM"],
+        "target": "es6",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "noStrictGenericChecks": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "allowJs": true,
+        "typeRoots": ["./node_modules/@types", "./src/types"]
+    },
+    "include": [
+        "./src/**/*"
+    ]
+}
