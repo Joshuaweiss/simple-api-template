@@ -28,3 +28,7 @@ variable "user_name" {
   type = string
   default = "bastion"
 }
+
+variable "name" {
+  type = string
+}

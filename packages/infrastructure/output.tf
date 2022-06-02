@@ -1,3 +1,7 @@
+output "aws_region" {
+  value = var.aws_region
+}
+
 output "master_username" {
   value = module.rds.master_username
 }
@@ -18,10 +22,14 @@ output "rds_password_secret_id" {
   value = module.rds.password_secret_id
 }
 
-# output "lambda_sg" {
-#   value = module.networking.lambda_security_group
-# }
-
 output "private_subnet_ids" {
-  value = module.networking.private_subnet_ids
+  value = slice(
+    module.networking.private_subnet_ids,
+    0,
+    min(var.limit_azs, length(module.networking.private_subnet_ids))
+  )
+}
+
+output "api_sg_id" {
+  value = aws_security_group.api-sg.id
 }

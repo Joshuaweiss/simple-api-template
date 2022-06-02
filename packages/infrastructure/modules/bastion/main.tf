@@ -33,14 +33,17 @@ resource "aws_instance" "default" {
     ignore_changes = [ami]
   }
 
-  tags = merge(var.tags, { Name = "bastion-host" })
+  tags = merge(var.tags, {
+    Name = "bastion-host",
+  })
 }
 
 resource "aws_security_group" "bastion-sg" {
-  name   = "auth-bastion-sg"
   vpc_id = var.vpc_id
 
-  tags = var.tags
+  tags = merge(var.tags, {
+    Name = "bastion_host",
+  })
 }
 
 resource "aws_security_group_rule" "bastion-sg-egress" {
@@ -50,10 +53,9 @@ resource "aws_security_group_rule" "bastion-sg-egress" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
-  ipv6_cidr_blocks  = ["::/0"]
 }
 
-resource "aws_security_group_rule" "bastion-sg-ingress" {
+resource "aws_security_group_rule" "bastion-sg-ssh-ingress" {
   security_group_id = aws_security_group.bastion-sg.id
   type              = "ingress"
   protocol          = "tcp"
