@@ -8,7 +8,7 @@ const LOCAL_CONFIG = {
 };
 
 module.exports = (conf) => {
-    if (!conf.stage) {
+    if (!conf.options.stage) {
         return LOCAL_CONFIG;
     }
 

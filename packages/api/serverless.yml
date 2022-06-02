@@ -3,6 +3,7 @@ frameworkVersion: '3'
 
 custom:
   terraform: ${file(./terraform.cjs)}
+  stageConfiguration: ${file(./config.${opt:stage}.json)}
   webpack:
     webpackConfig: 'webpack.config.cjs'
     packager: yarn
@@ -12,17 +13,42 @@ custom:
 provider:
   name: aws
   runtime: nodejs14.x
+  vpc:
+    subnetIds: ${self:custom.terraform.private_subnet_ids.value}
+    securityGroupIds:
+      - ${self:custom.terraform.api_sg_id.value}
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "secretsmanager:GetSecretValue"
+          Resource:
+            - "${self:custom.terraform.rds_password_secret_id.value}"
   environment:
     STAGE: ${opt:stage, "local"}
-    MASTER_USERNAME: ${self:custom.terraform.master_username.value}
-    DATABASE_NAME: ${self:custom.terraform.database_name.value}
-    RDS_ENDPOINT: ${self:custom.terraform.rds_endpoint.value}
-    RDS_PASSWORD_SECRET_ID: ${self:custom.terraform.rds_password_secret_id.value}
-
+    RDS_PASSWORD_SECRET_ID: "${self:custom.terraform.rds_password_secret_id.value}"
+    DATABASE_NAME: "${self:custom.terraform.database_name.value}"
+    MASTER_USERNAME: "${self:custom.terraform.master_username.value}"
+    RDS_ENDPOINT: "${self:custom.terraform.rds_endpoint.value}"
+  httpApi:
+    authorizers:
+      auth0:
+        identitySource: "$request.header.Authorization"
+        issuerUrl: ${self:custom.stageConfiguration.issuerUrl}
+        audience:
+          - ${self:custom.stageConfiguration.audience}
 functions:
   migrations:
     handler: src/handlers/migrations.handler
-
+  createUser:
+    handler: src/handlers/createUser.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /users
+          authorizer:
+            name: auth0
 plugins:
   - serverless-webpack
   - serverless-offline

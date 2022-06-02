@@ -1,31 +1,43 @@
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
 
-const ssmClient = new SSMClient({});
+const secretManagerClient = new SecretsManagerClient({});
 
 const stage = process.env.STAGE ?? 'local';
 
 const getConnection = async () => {
     if (stage === 'local') {
-        return {
+        const localConfig = {
             user: 'master',
             password: '1234',
             database: 'test_proj_db',
             host: 'localhost',
             port: 5432,
         };
+        console.log('DATABASE CONNECTION', localConfig);
+        return localConfig;
     }
 
-    const { Parameter: password } = await ssmClient.send(new GetParameterCommand({
-        Name: process.env.RDS_PASSWORD_SECRET_ID,
-    }));
+    console.log('GET DATABASE PASSWORD');
+    const { SecretString: password } = await secretManagerClient.send(
+        new GetSecretValueCommand({
+            SecretId: process.env.RDS_PASSWORD_SECRET_ID,
+        }),
+    );
 
-    return {
+    const connectionConfig = {
         user: process.env.MASTER_USERNAME,
-        password,
+        password: `${password}`,
         database: process.env.DATABASE_NAME,
         host: process.env.RDS_ENDPOINT,
         port: 5432,
     };
+
+    console.log('DATABASE CONNECTION', {
+        ...connectionConfig,
+        password: '********',
+    });
+
+    return connectionConfig;
 };
 
 export default async () => ({

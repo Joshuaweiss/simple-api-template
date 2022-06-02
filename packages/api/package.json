@@ -9,10 +9,10 @@
         "migrate:make": "yarn knex migrate:make",
         "migrate:latest": "yarn knex migrate:latest",
         "migrate:rollback": "yarn knex migrate:rollback",
-        "start": "sls offline start"
+        "start": "sls offline start --ignoreJWTSignature"
     },
     "dependencies": {
-        "@aws-sdk/client-ssm": "^3.95.0",
+        "@aws-sdk/client-secrets-manager": "^3.99.0",
         "knex": "^1.0.7",
         "objection": "^3.0.1",
         "pg": "^8.7.3",
