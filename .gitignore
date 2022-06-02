@@ -3,3 +3,5 @@ public_key
 terraform.tfstate
 terraform.tfstate.backup
 .terraform
+.serverless
+.webpack
